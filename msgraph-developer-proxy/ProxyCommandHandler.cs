@@ -17,15 +17,19 @@ public class ProxyCommandHandler : ICommandHandler {
     private readonly ISet<Regex> _urlsToWatch;
     private readonly ILogger _logger;
 
+    private readonly IEnumerable<IProxyPlugin> _plugins;
+
     public ProxyCommandHandler(Option<int?> port,
                                Option<LogLevel?> logLevel,
                                PluginEvents pluginEvents,
                                ISet<Regex> urlsToWatch,
+                               IEnumerable<IProxyPlugin> plugins,
                                ILogger logger) {
         Port = port ?? throw new ArgumentNullException(nameof(port));
         LogLevel = logLevel ?? throw new ArgumentNullException(nameof(logLevel));
         _pluginEvents = pluginEvents ?? throw new ArgumentNullException(nameof(pluginEvents));
         _urlsToWatch = urlsToWatch ?? throw new ArgumentNullException(nameof(urlsToWatch));
+        _plugins = plugins ?? throw new ArgumentNullException(nameof(plugins));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -55,7 +59,7 @@ public class ProxyCommandHandler : ICommandHandler {
         }
 
         try {
-            await new ProxyEngine(Configuration, _urlsToWatch, _pluginEvents, _logger).Run(cancellationToken);
+            await new ProxyEngine(Configuration, _urlsToWatch, _pluginEvents, _plugins, _logger).Run(cancellationToken);
             return 0;
         }
         catch (Exception ex) {

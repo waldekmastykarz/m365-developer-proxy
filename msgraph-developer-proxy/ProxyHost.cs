@@ -35,6 +35,6 @@ internal class ProxyHost {
         return command;
     }
 
-    public ProxyCommandHandler GetCommandHandler(PluginEvents pluginEvents, ISet<Regex> urlsToWatch, ILogger logger) => new ProxyCommandHandler(_portOption, _logLevelOption, pluginEvents, urlsToWatch, logger);
+    public ProxyCommandHandler GetCommandHandler(PluginEvents pluginEvents, ISet<Regex> urlsToWatch, IEnumerable<IProxyPlugin> plugins, ILogger logger) => new ProxyCommandHandler(_portOption, _logLevelOption, pluginEvents, urlsToWatch, plugins, logger);
 }
 

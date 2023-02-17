@@ -15,6 +15,6 @@ PluginLoaderResult loaderResults = new PluginLoader(logger).LoadPlugins(pluginEv
 // have all the plugins init and provide any command line options
 pluginEvents.RaiseInit(new InitArgs(rootCommand));
 
-rootCommand.Handler = proxyHost.GetCommandHandler(pluginEvents, loaderResults.UrlsToWatch, logger);
+rootCommand.Handler = proxyHost.GetCommandHandler(pluginEvents, loaderResults.UrlsToWatch, loaderResults.ProxyPlugins, logger);
 
 return await rootCommand.InvokeAsync(args);

@@ -2,8 +2,10 @@
 // Licensed under the MIT License.
 
 using Microsoft.Graph.DeveloperProxy.Abstractions;
+using System.CommandLine;
 using System.Diagnostics;
 using System.Net;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Titanium.Web.Proxy;
 using Titanium.Web.Proxy.EventArguments;
@@ -17,6 +19,7 @@ public class ProxyEngine {
     private readonly PluginEvents _pluginEvents;
     private readonly ILogger _logger;
     private readonly ProxyConfiguration _config;
+    private readonly IEnumerable<IProxyPlugin> _plugins;
     private ProxyServer? _proxyServer;
     private ExplicitProxyEndPoint? _explicitEndPoint;
     // lists of URLs to watch, used for intercepting requests
@@ -38,10 +41,11 @@ public class ProxyEngine {
         }
     }
 
-    public ProxyEngine(ProxyConfiguration config, ISet<Regex> urlsToWatch, PluginEvents pluginEvents, ILogger logger) {
+    public ProxyEngine(ProxyConfiguration config, ISet<Regex> urlsToWatch, PluginEvents pluginEvents, IEnumerable<IProxyPlugin> plugins, ILogger logger) {
         _config = config ?? throw new ArgumentNullException(nameof(config));
         _urlsToWatch = urlsToWatch ?? throw new ArgumentNullException(nameof(urlsToWatch));
         _pluginEvents = pluginEvents ?? throw new ArgumentNullException(nameof(pluginEvents));
+        _plugins = plugins ?? throw new ArgumentNullException(nameof(plugins));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -96,8 +100,47 @@ public class ProxyEngine {
         _logger.LogInfo("");
         Console.CancelKeyPress += Console_CancelKeyPress;
         // wait for the proxy to stop
-        Console.ReadLine();
+        if (!Console.IsInputRedirected) {
+            ReadKeys();
+        }
         while (_proxyServer.ProxyRunning) { Thread.Sleep(10); }
+    }
+
+    private void ReadKeys() {
+        ConsoleKey key;
+        do {
+            key = Console.ReadKey(true).Key;
+            if (key == ConsoleKey.UpArrow) {
+                SetCurrentRate(10);
+            }
+            else if (key == ConsoleKey.DownArrow) {
+                SetCurrentRate(-10);
+            }
+        } while (key != ConsoleKey.Escape);
+    }
+
+    private void SetCurrentRate(int rate) {
+        var plugin = _plugins.FirstOrDefault(p => p.Name == "RandomErrorPlugin");
+        if (plugin is null) {
+            return;
+        }
+
+        var config = plugin.GetType()
+            .InvokeMember("_configuration", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField, null, plugin, null);
+        if (config is null) {
+            return;
+        }
+
+        var currentRate = (int)config.GetType()
+            .InvokeMember("Rate", BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty, null, config, null)!;
+
+        var newRate = currentRate + rate;
+        if (newRate > 100) newRate = 100;
+        if (newRate < 0) newRate = 0;
+        
+        config.GetType()
+            .InvokeMember("Rate", BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty, null, config, new object[] { newRate });
+        Console.Error.WriteLine($"Failure rate: {newRate}");
     }
 
     // Convert strings from config to regexes.
