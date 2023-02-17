@@ -109,6 +109,16 @@ public class RandomErrorPlugin : BaseProxyPlugin {
 
     // uses config to determine if a request should be failed
     private FailMode ShouldFail(ProxyRequestArgs e) {
+        if (e.ResponseState.RequestMode == RequestMode.R429) {
+            return FailMode.Throttled;
+        }
+        else if (e.ResponseState.RequestMode == RequestMode.Random) {
+            return FailMode.Random;
+        }
+        else if (e.ResponseState.RequestMode == RequestMode.PassThru) {
+            return FailMode.PassThru;
+        }
+
         var r = e.Session.HttpClient.Request;
         string key = BuildThrottleKey(r);
         if (_throttledRequests.TryGetValue(key, out DateTime retryAfterDate)) {

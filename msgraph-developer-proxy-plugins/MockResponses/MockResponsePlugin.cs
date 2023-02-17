@@ -85,7 +85,7 @@ public class MockResponsePlugin : BaseProxyPlugin {
     private void OnRequest(object? sender, ProxyRequestArgs e) {
         Request request = e.Session.HttpClient.Request;
         ResponseState state = e.ResponseState;
-        if (!_configuration.NoMocks && _urlsToWatch is not null && e.ShouldExecute(_urlsToWatch)) {
+        if (!_configuration.NoMocks && _urlsToWatch is not null && e.ShouldExecute(_urlsToWatch) && state.RequestMode != RequestMode.PassThru) {
             var matchingResponse = GetMatchingMockResponse(request);
             if (matchingResponse is not null) {
                 ProcessMockResponse(e.Session, matchingResponse);

@@ -3,6 +3,13 @@
 
 namespace Microsoft.Graph.DeveloperProxy.Abstractions;
 
+public enum RequestMode {
+    Continue,
+    Random,
+    PassThru,
+    R429
+}
+
 public class ResponseState {
     /// <summary>
     /// Should be set to true when an event handler for a BeforeRequest event sets a response.
@@ -14,4 +21,5 @@ public class ResponseState {
     /// If true caution should be used when making further modifications to the response as unintended consequences may arise
     /// </summary>
     public bool HasBeenModified { get; set; } = false;
+    public RequestMode RequestMode { get; set; }
 }
