@@ -24,6 +24,8 @@ public class ProxyConfiguration {
     public LabelMode LabelMode { get; set; } = LabelMode.Text;
     [JsonPropertyName("record")]
     public bool Record { get; set; } = false;
+    [JsonPropertyName("interactive")]
+    public bool Interactive { get; set; } = false;
     [JsonPropertyName("logLevel")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public LogLevel LogLevel { get; set; } = LogLevel.Info;

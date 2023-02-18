@@ -4,6 +4,8 @@
 namespace Microsoft.Graph.DeveloperProxy.Abstractions;
 
 public enum RequestMode {
+    NonInteractive,
+    Prompt,
     Continue,
     Random,
     PassThru,

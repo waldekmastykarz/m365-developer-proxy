@@ -40,6 +40,7 @@ public class ProxyEngine {
 
     private bool _isRecording = false;
     private List<RequestLog> _requestLogs = new List<RequestLog>();
+    private ResponseState _responseState;
 
     public ProxyEngine(ProxyConfiguration config, ISet<Regex> urlsToWatch, PluginEvents pluginEvents, ILogger logger) {
         _config = config ?? throw new ArgumentNullException(nameof(config));
@@ -130,6 +131,27 @@ public class ProxyEngine {
             }
             else if (key == ConsoleKey.S) {
                 StopRecording();
+            }
+
+            if (_responseState.RequestMode == RequestMode.Prompt) {
+                switch (key) {
+                    case ConsoleKey.P:
+                        _responseState.RequestMode = RequestMode.PassThru;
+                        break;
+                    case ConsoleKey.C:
+                        _responseState.RequestMode = RequestMode.Random;
+                        break;
+                    case ConsoleKey.T:
+                        _responseState.RequestMode = RequestMode.R429;
+                        break;
+                    case ConsoleKey.N:
+                        _responseState.RequestMode = RequestMode.Continue;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid key. Please try again.");
+                        ShowInteractivePrompt();
+                    break;
+                }
             }
         } while (key != ConsoleKey.Escape);
     }
@@ -262,13 +284,29 @@ public class ProxyEngine {
     }
 
     private void HandleRequest(SessionEventArgs e) {
-        ResponseState responseState = new ResponseState();
-        _pluginEvents.RaiseProxyBeforeRequest(new ProxyRequestArgs(e, responseState));
+        _responseState = new ResponseState();
+        ShowInteractivePrompt();
+
+        _pluginEvents.RaiseProxyBeforeRequest(new ProxyRequestArgs(e, _responseState));
 
         // We only need to set the proxy header if the proxy has not set a response and the request is going to be sent to the target.
-        if (!responseState.HasBeenSet) {
+        if (!_responseState.HasBeenSet) {
             _logger?.LogRequest(new[] { "Passed through" }, MessageType.PassedThrough, new LoggingContext(e));
             AddProxyHeader(e.HttpClient.Request);
+        }
+    }
+
+    private void ShowInteractivePrompt() {
+        if (!_config.Interactive) {
+            return;
+        }
+        
+        _responseState.RequestMode = RequestMode.Prompt;
+        Console.WriteLine("(p)ass, (c)haos, (t)hrottle, co(n)tinue");
+
+        while (_responseState.RequestMode == RequestMode.Prompt &&
+            !Console.KeyAvailable) {
+            Thread.Sleep(10);
         }
     }
 

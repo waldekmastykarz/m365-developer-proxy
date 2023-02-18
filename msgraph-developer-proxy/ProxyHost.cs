@@ -11,6 +11,7 @@ internal class ProxyHost {
     private Option<int?> _portOption;
     private Option<LogLevel?> _logLevelOption;
     private Option<bool?> _recordOption;
+    private Option<bool?> _interactiveOption;
 
     public ProxyHost() {
         _portOption = new Option<int?>("--port", "The port for the proxy server to listen on");
@@ -26,19 +27,21 @@ internal class ProxyHost {
         });
 
         _recordOption = new Option<bool?>("--record", "Use this option to record all request logs");
+        _interactiveOption = new Option<bool?>("--interactive", "Use this option to enable interactive mode");
     }
 
     public RootCommand GetRootCommand() {
         var command = new RootCommand {
             _portOption,
             _logLevelOption,
-            _recordOption
+            _recordOption,
+            _interactiveOption
         };
         command.Description = "Microsoft Graph Developer Proxy is a command line tool that simulates real world behaviors of Microsoft Graph and other APIs, locally.";
 
         return command;
     }
 
-    public ProxyCommandHandler GetCommandHandler(PluginEvents pluginEvents, ISet<Regex> urlsToWatch, ILogger logger) => new ProxyCommandHandler(_portOption, _logLevelOption, _recordOption, pluginEvents, urlsToWatch, logger);
+    public ProxyCommandHandler GetCommandHandler(PluginEvents pluginEvents, ISet<Regex> urlsToWatch, ILogger logger) => new ProxyCommandHandler(_portOption, _logLevelOption, _recordOption, _interactiveOption, pluginEvents, urlsToWatch, logger);
 }
 
