@@ -1,0 +1,46 @@
+{
+  "responses": [
+    {
+      "statusCode": 429,
+      "headers": {
+        "content-type": "image/jpeg"
+      },
+      "body": "@/Users/waldek/github/waldekmastykarz/msgraph-developer-proxy/msgraph-developer-proxy/http-cats/429.jpeg"
+    },
+    {
+      "statusCode": 500,
+      "headers": {
+        "content-type": "image/jpeg"
+      },
+      "body": "@/Users/waldek/github/waldekmastykarz/msgraph-developer-proxy/msgraph-developer-proxy/http-cats/500.jpeg"
+    },
+    {
+      "statusCode": 502,
+      "headers": {
+        "content-type": "image/jpeg"
+      },
+      "body": "@/Users/waldek/github/waldekmastykarz/msgraph-developer-proxy/msgraph-developer-proxy/http-cats/502.jpeg"
+    },
+    {
+      "statusCode": 503,
+      "headers": {
+        "content-type": "image/jpeg"
+      },
+      "body": "@/Users/waldek/github/waldekmastykarz/msgraph-developer-proxy/msgraph-developer-proxy/http-cats/503.jpeg"
+    },
+    {
+      "statusCode": 504,
+      "headers": {
+        "content-type": "image/jpeg"
+      },
+      "body": "@/Users/waldek/github/waldekmastykarz/msgraph-developer-proxy/msgraph-developer-proxy/http-cats/504.jpeg"
+    },
+    {
+      "statusCode": 507,
+      "headers": {
+        "content-type": "image/jpeg"
+      },
+      "body": "@/Users/waldek/github/waldekmastykarz/msgraph-developer-proxy/msgraph-developer-proxy/http-cats/507.jpeg"
+    }
+  ]
+}

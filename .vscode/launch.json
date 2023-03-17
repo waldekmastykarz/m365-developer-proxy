@@ -11,7 +11,7 @@
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
       "program": "${workspaceFolder}/msgraph-developer-proxy/bin/Debug/net7.0/mgdp.dll",
-      "args": [],
+      "args": ["--config-file", "/Users/waldek/github/waldekmastykarz/msgraph-developer-proxy/msgraph-developer-proxy/http-cats-config.json"],
       "cwd": "${workspaceFolder}/msgraph-developer-proxy/bin/Debug/net7.0",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
       "console": "integratedTerminal",
