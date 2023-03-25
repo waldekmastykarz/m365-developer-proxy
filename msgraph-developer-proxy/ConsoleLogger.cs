@@ -93,15 +93,17 @@ public class ConsoleLogger : ILogger {
 
     public void WriteBoxedWithInvertedLabels(string[] message, MessageType messageType) {
         var labelSpacing = "  ";
-        var noLabelSpacing = "           ";
-        var interceptedRequest = $"[ REQUEST ]";
-        var passedThrough = "[   API   ]";
-        var chaos = "[  CHAOS  ]";
-        var warning = "[ WARNING ]";
-        var mock = "[  MOCK   ]";
-        var normal = "[   LOG   ]";
-        var fail = "[  FAIL   ]";
-        var tip = "[   TIP   ]";
+        var interceptedRequest = "request";
+        var passedThrough = "api";
+        var chaos = "chaos";
+        var warning = "warning";
+        var mock = "mock";
+        var normal = "log";
+        var fail = "fail";
+        var tip = "tip";
+        var allLabels = new[] { interceptedRequest, passedThrough, chaos, warning, mock, normal, fail, tip };
+        var maxLabelLength = allLabels.Max(l => l.Length);
+        var noLabelSpacing = new string(' ', maxLabelLength + 2);
 
         var label = normal;
         var fgColor = Console.ForegroundColor;
@@ -110,6 +112,7 @@ public class ConsoleLogger : ILogger {
         switch (messageType) {
             case MessageType.InterceptedRequest:
                 label = interceptedRequest;
+                bgColor = ConsoleColor.DarkGray;
                 break;
             case MessageType.PassedThrough:
                 label = passedThrough;
@@ -146,11 +149,14 @@ public class ConsoleLogger : ILogger {
                 break;
         }
 
+        var leadingSpaces = new string(' ', maxLabelLength - label.Length);
+
         if (message.Length == 1) {
             // no need to box a single line message
+            Console.Write(leadingSpaces);
             Console.ForegroundColor = fgColor;
             Console.BackgroundColor = bgColor;
-            Console.Write(label);
+            Console.Write($" {label} ");
             Console.ResetColor();
             Console.WriteLine($"{labelSpacing}{_boxSpacing}{message[0]}");
         }
@@ -158,9 +164,10 @@ public class ConsoleLogger : ILogger {
             for (var i = 0; i < message.Length; i++) {
                 if (i == 0) {
                     // print label and top of the box
+                    Console.Write(leadingSpaces);
                     Console.ForegroundColor = fgColor;
                     Console.BackgroundColor = bgColor;
-                    Console.Write(label);
+                    Console.Write($" {label} ");
                     Console.ResetColor();
                     Console.WriteLine($"{labelSpacing}{_boxTopLeft}{message[i]}");
                 }
