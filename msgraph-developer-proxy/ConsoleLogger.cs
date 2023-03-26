@@ -11,7 +11,7 @@ public class ConsoleLogger : ILogger {
     private readonly PluginEvents _pluginEvents;
     private readonly string _boxTopLeft = "";
     private readonly string _boxLeft = "";
-    private readonly string _boxBottomLeft = "\u283f ";
+    private readonly string _boxBottomLeft = "\u276d ";
     // used to align single-line messages
     private readonly string _boxSpacing = "  ";
 
