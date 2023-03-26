@@ -9,9 +9,9 @@ public class ConsoleLogger : ILogger {
     private readonly ConsoleColor _color;
     private readonly LabelMode _labelMode;
     private readonly PluginEvents _pluginEvents;
-    private readonly string _boxTopLeft = "\u256d ";
-    private readonly string _boxLeft = "\u2502 ";
-    private readonly string _boxBottomLeft = "\u2570 ";
+    private readonly string _boxTopLeft = "";
+    private readonly string _boxLeft = "";
+    private readonly string _boxBottomLeft = "\u283f ";
     // used to align single-line messages
     private readonly string _boxSpacing = "  ";
 
@@ -158,7 +158,7 @@ public class ConsoleLogger : ILogger {
             Console.BackgroundColor = bgColor;
             Console.Write($" {label} ");
             Console.ResetColor();
-            Console.WriteLine($"{labelSpacing}{_boxSpacing}{message[0]}");
+            Console.WriteLine($"{labelSpacing}{message[0]}");
         }
         else {
             for (var i = 0; i < message.Length; i++) {
