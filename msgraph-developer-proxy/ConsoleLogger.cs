@@ -9,9 +9,9 @@ public class ConsoleLogger : ILogger {
     private readonly ConsoleColor _color;
     private readonly LabelMode _labelMode;
     private readonly PluginEvents _pluginEvents;
-    private readonly string _boxTopLeft = "\u250c ";
+    private readonly string _boxTopLeft = "\u256d ";
     private readonly string _boxLeft = "\u2502 ";
-    private readonly string _boxBottomLeft = "\u2514 ";
+    private readonly string _boxBottomLeft = "\u2570 ";
     // used to align single-line messages
     private readonly string _boxSpacing = "  ";
 
