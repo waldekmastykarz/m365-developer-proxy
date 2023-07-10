@@ -28,13 +28,13 @@ public class ThrottlerInfo {
     /// Returns an instance of ThrottlingInfo that contains information
     /// whether the request should be throttled or not.
     /// </summary>
-    public Func<Request, string, ThrottlingInfo> ShouldThrottle { get; private set; }
+    public Func<Uri, string, ThrottlingInfo> ShouldThrottle { get; private set; }
     /// <summary>
     /// Time when the throttling window will be reset
     /// </summary>
     public DateTime ResetTime { get; set; }
 
-    public ThrottlerInfo(string throttlingKey, Func<Request, string, ThrottlingInfo> shouldThrottle, DateTime resetTime) {
+    public ThrottlerInfo(string throttlingKey, Func<Uri, string, ThrottlingInfo> shouldThrottle, DateTime resetTime) {
         ThrottlingKey = throttlingKey ?? throw new ArgumentNullException(nameof(throttlingKey));
         ShouldThrottle = shouldThrottle ?? throw new ArgumentNullException(nameof(shouldThrottle));
         ResetTime = resetTime;

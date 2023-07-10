@@ -46,8 +46,8 @@ public class GenericRandomErrorPlugin : BaseProxyPlugin {
         UpdateProxyResponse(e, error);
     }
 
-    private ThrottlingInfo ShouldThrottle(Request request, string throttlingKey) {
-        var throttleKeyForRequest = BuildThrottleKey(request);
+    private ThrottlingInfo ShouldThrottle(Uri requestUri, string throttlingKey) {
+        var throttleKeyForRequest = BuildThrottleKey(requestUri);
         return new ThrottlingInfo(throttleKeyForRequest == throttlingKey ? retryAfterInSeconds : 0, "Retry-After");
     }
 
@@ -60,7 +60,7 @@ public class GenericRandomErrorPlugin : BaseProxyPlugin {
         if (error.StatusCode == (int)HttpStatusCode.TooManyRequests &&
             error.AddDynamicRetryAfter.GetValueOrDefault(false)) {
             var retryAfterDate = DateTime.Now.AddSeconds(retryAfterInSeconds);
-            ev.ThrottledRequests.Add(new ThrottlerInfo(BuildThrottleKey(request), ShouldThrottle, retryAfterDate));
+            ev.ThrottledRequests.Add(new ThrottlerInfo(BuildThrottleKey(request.RequestUri), ShouldThrottle, retryAfterDate));
             headers.Add(new HttpHeader("Retry-After", retryAfterInSeconds.ToString()));
         }
 
@@ -90,7 +90,7 @@ public class GenericRandomErrorPlugin : BaseProxyPlugin {
     }
 
     // throttle requests per host
-    private string BuildThrottleKey(Request r) => r.RequestUri.Host;
+    private string BuildThrottleKey(Uri requestUri) => requestUri.Host;
 
     public override void Register(IPluginEvents pluginEvents,
                          IProxyContext context,

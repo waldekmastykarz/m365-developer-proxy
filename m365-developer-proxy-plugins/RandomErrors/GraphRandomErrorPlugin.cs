@@ -31,57 +31,7 @@ public class GraphRandomErrorPlugin : BaseProxyPlugin {
     public override string Name => nameof(GraphRandomErrorPlugin);
 
     private const int retryAfterInSeconds = 5;
-    private readonly Dictionary<string, HttpStatusCode[]> _methodStatusCode = new()
-    {
-        {
-            "GET", new[] {
-                HttpStatusCode.TooManyRequests,
-                HttpStatusCode.InternalServerError,
-                HttpStatusCode.BadGateway,
-                HttpStatusCode.ServiceUnavailable,
-                HttpStatusCode.GatewayTimeout
-            }
-        },
-        {
-            "POST", new[] {
-                HttpStatusCode.TooManyRequests,
-                HttpStatusCode.InternalServerError,
-                HttpStatusCode.BadGateway,
-                HttpStatusCode.ServiceUnavailable,
-                HttpStatusCode.GatewayTimeout,
-                HttpStatusCode.InsufficientStorage
-            }
-        },
-        {
-            "PUT", new[] {
-                HttpStatusCode.TooManyRequests,
-                HttpStatusCode.InternalServerError,
-                HttpStatusCode.BadGateway,
-                HttpStatusCode.ServiceUnavailable,
-                HttpStatusCode.GatewayTimeout,
-                HttpStatusCode.InsufficientStorage
-            }
-        },
-        {
-            "PATCH", new[] {
-                HttpStatusCode.TooManyRequests,
-                HttpStatusCode.InternalServerError,
-                HttpStatusCode.BadGateway,
-                HttpStatusCode.ServiceUnavailable,
-                HttpStatusCode.GatewayTimeout
-            }
-        },
-        {
-            "DELETE", new[] {
-                HttpStatusCode.TooManyRequests,
-                HttpStatusCode.InternalServerError,
-                HttpStatusCode.BadGateway,
-                HttpStatusCode.ServiceUnavailable,
-                HttpStatusCode.GatewayTimeout,
-                HttpStatusCode.InsufficientStorage
-            }
-        }
-    };
+    public static readonly Dictionary<string, HttpStatusCode[]> _methodStatusCode = GraphUtils.MethodStatusCode;
     private readonly Random _random;
 
     public GraphRandomErrorPlugin() {
@@ -109,8 +59,8 @@ public class GraphRandomErrorPlugin : BaseProxyPlugin {
         UpdateProxyResponse(e, errorStatus);
     }
 
-    private ThrottlingInfo ShouldThrottle(Request request, string throttlingKey) {
-        var throttleKeyForRequest = GraphUtils.BuildThrottleKey(request);
+    internal static ThrottlingInfo ShouldThrottle(Uri requestUri, string throttlingKey) {
+        var throttleKeyForRequest = GraphUtils.BuildThrottleKey(requestUri);
         return new ThrottlingInfo(throttleKeyForRequest == throttlingKey ? retryAfterInSeconds : 0, "Retry-After");
     }
 
@@ -122,7 +72,7 @@ public class GraphRandomErrorPlugin : BaseProxyPlugin {
         var headers = ProxyUtils.BuildGraphResponseHeaders(request, requestId, requestDate);
         if (errorStatus == HttpStatusCode.TooManyRequests) {
             var retryAfterDate = DateTime.Now.AddSeconds(retryAfterInSeconds);
-            ev.ThrottledRequests.Add(new ThrottlerInfo(GraphUtils.BuildThrottleKey(request), ShouldThrottle, retryAfterDate));
+            ev.ThrottledRequests.Add(new ThrottlerInfo(GraphUtils.BuildThrottleKey(request.RequestUri), ShouldThrottle, retryAfterDate));
             headers.Add(new HttpHeader("Retry-After", retryAfterInSeconds.ToString()));
         }
 
@@ -172,8 +122,8 @@ public class GraphRandomErrorPlugin : BaseProxyPlugin {
             _configuration.AllowedErrors = allowedErrors.ToList();
 
         if (_configuration.AllowedErrors.Any()) {
-            foreach (string k in _methodStatusCode.Keys) {
-                _methodStatusCode[k] = _methodStatusCode[k].Where(e => _configuration.AllowedErrors.Any(a => (int)e == a)).ToArray();
+            foreach (string k in GraphUtils.MethodStatusCode.Keys) {
+                _methodStatusCode[k] = GraphUtils.MethodStatusCode[k].Where(e => _configuration.AllowedErrors.Any(a => (int)e == a)).ToArray();
             }
         }
     }
