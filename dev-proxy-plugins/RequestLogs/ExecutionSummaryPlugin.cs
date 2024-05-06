@@ -31,6 +31,10 @@ public class ExecutionSummaryPlugin : BaseProxyPlugin
     private const string _requestsInterceptedMessage = "Requests intercepted";
     private const string _requestsPassedThroughMessage = "Requests passed through";
 
+    public ExecutionSummaryPlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    {
+    }
+
     public override Option[] GetOptions()
     {
         var filePath = new Option<string?>(_filePathOptionName, "Path to the file where the summary should be saved. If not specified, the summary will be printed to the console. Path can be absolute or relative to the current working directory.")
@@ -74,17 +78,14 @@ public class ExecutionSummaryPlugin : BaseProxyPlugin
         return [filePath, groupBy];
     }
 
-    public override void Register(IPluginEvents pluginEvents,
-                            IProxyContext context,
-                            ISet<UrlToWatch> urlsToWatch,
-                            IConfigurationSection? configSection = null)
+    public override void Register()
     {
-        base.Register(pluginEvents, context, urlsToWatch, configSection);
+        base.Register();
 
-        configSection?.Bind(_configuration);
+        ConfigSection?.Bind(_configuration);
 
-        pluginEvents.OptionsLoaded += OnOptionsLoaded;
-        pluginEvents.AfterRecordingStop += AfterRecordingStop;
+        PluginEvents.OptionsLoaded += OnOptionsLoaded;
+        PluginEvents.AfterRecordingStop += AfterRecordingStop;
     }
 
     private void OnOptionsLoaded(object? sender, OptionsLoadedArgs e)
@@ -120,7 +121,7 @@ public class ExecutionSummaryPlugin : BaseProxyPlugin
 
         if (string.IsNullOrEmpty(_configuration.FilePath))
         {
-            _logger?.LogInformation("Report:\r\n{report}", string.Join(Environment.NewLine, report));
+            Logger.LogInformation("Report:\r\n{report}", string.Join(Environment.NewLine, report));
         }
         else
         {
