@@ -22,6 +22,7 @@ public abstract class BaseProxyPlugin : IProxyPlugin
 
     public BaseProxyPlugin(IPluginEvents pluginEvents,
                          IProxyContext context,
+                         ILogger logger,
                          ISet<UrlToWatch> urlsToWatch,
                          IConfigurationSection? configSection = null)
     {
@@ -30,9 +31,14 @@ public abstract class BaseProxyPlugin : IProxyPlugin
             throw new ArgumentNullException(nameof(pluginEvents));
         }
 
-        if (context is null || context.Logger is null)
+        if (context is null)
         {
-            throw new ArgumentException($"{nameof(context)} must not be null and must supply a non-null Logger", nameof(context));
+            throw new ArgumentNullException(nameof(context));
+        }
+
+        if (logger is null)
+        {
+            throw new ArgumentNullException(nameof(logger));
         }
 
         if (urlsToWatch is null || !urlsToWatch.Any())
@@ -42,7 +48,7 @@ public abstract class BaseProxyPlugin : IProxyPlugin
 
         UrlsToWatch = urlsToWatch;
         Context = context;
-        Logger = context.Logger;
+        Logger = logger;
         ConfigSection = configSection;
         PluginEvents = pluginEvents;
     }

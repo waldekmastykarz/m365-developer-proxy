@@ -39,7 +39,7 @@ public class MinimalPermissionsGuidancePlugin : BaseProxyPlugin
     private MinimalPermissionsGuidancePluginConfiguration _configuration = new();
     private static readonly string _filePathOptionName = "--minimal-permissions-summary-file-path";
 
-    public MinimalPermissionsGuidancePlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public MinimalPermissionsGuidancePlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 

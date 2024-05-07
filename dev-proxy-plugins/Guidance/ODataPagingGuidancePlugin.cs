@@ -14,7 +14,7 @@ public class ODataPagingGuidancePlugin : BaseProxyPlugin
     public override string Name => nameof(ODataPagingGuidancePlugin);
     private IList<string> pagingUrls = new List<string>();
 
-    public ODataPagingGuidancePlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public ODataPagingGuidancePlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 

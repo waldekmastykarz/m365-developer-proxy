@@ -10,7 +10,7 @@ namespace Microsoft.DevProxy.Plugins.Guidance;
 
 public class GraphSelectGuidancePlugin : BaseProxyPlugin
 {
-    public GraphSelectGuidancePlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public GraphSelectGuidancePlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 

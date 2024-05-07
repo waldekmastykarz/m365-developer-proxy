@@ -22,6 +22,9 @@ internal class PluginLoaderResult
 
 internal class PluginLoader
 {
+    private PluginConfig? _pluginConfig;
+    private ILogger _logger;
+
     public PluginLoader(ILogger logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -85,7 +88,7 @@ internal class PluginLoader
         {
             if (typeof(IProxyPlugin).IsAssignableFrom(type))
             {
-                IProxyPlugin? result = Activator.CreateInstance(type, [pluginEvents, context, urlsToWatch, configSection]) as IProxyPlugin;
+                IProxyPlugin? result = Activator.CreateInstance(type, [pluginEvents, context, _logger, urlsToWatch, configSection]) as IProxyPlugin;
                 if (result is not null && result.Name == pluginReference.Name)
                 {
                     return result;
@@ -113,9 +116,6 @@ internal class PluginLoader
             exclude
         );
     }
-
-    private PluginConfig? _pluginConfig;
-    private ILogger _logger;
 
     private PluginConfig PluginConfig
     {

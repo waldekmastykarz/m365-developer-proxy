@@ -34,7 +34,7 @@ public class DevToolsPlugin : BaseProxyPlugin
     public override string Name => nameof(DevToolsPlugin);
     private readonly DevToolsPluginConfiguration _configuration = new();
 
-    public DevToolsPlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public DevToolsPlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 

@@ -23,7 +23,7 @@ public class MockRequestPlugin : BaseProxyPlugin
     protected MockRequestConfiguration _configuration = new();
     private MockRequestLoader? _loader = null;
 
-    public MockRequestPlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public MockRequestPlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 

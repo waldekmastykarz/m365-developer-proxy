@@ -19,7 +19,7 @@ public class CachingGuidancePlugin : BaseProxyPlugin
     private readonly CachingGuidancePluginConfiguration _configuration = new();
     private IDictionary<string, DateTime> _interceptedRequests = new Dictionary<string, DateTime>();
 
-    public CachingGuidancePlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public CachingGuidancePlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 

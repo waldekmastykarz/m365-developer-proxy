@@ -492,7 +492,7 @@ public class ProxyEngine
     {
         if (IsProxiedHost(e.HttpClient.Request.RequestUri.Host))
         {
-            _pluginData.Add(e.GetHashCode(), new Dictionary<string, object>());
+            _pluginData.Add(e.GetHashCode(), new());
 
             // we need to keep the request body for further processing
             // by plugins
@@ -503,7 +503,8 @@ public class ProxyEngine
             }
 
             e.UserData = e.HttpClient.Request;
-            _logger.LogRequest(new[] { $"{e.HttpClient.Request.Method} {e.HttpClient.Request.Url}" }, MessageType.InterceptedRequest, new LoggingContext(e));
+            var message = $"{e.HttpClient.Request.Method} {e.HttpClient.Request.Url}";
+            _logger.LogRequest([message], MessageType.InterceptedRequest, new LoggingContext(e));
             await HandleRequest(e);
         }
     }

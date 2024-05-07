@@ -14,7 +14,7 @@ namespace Microsoft.DevProxy.Plugins.Mocks;
 
 public class GraphMockResponsePlugin : MockResponsePlugin
 {
-    public GraphMockResponsePlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public GraphMockResponsePlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 

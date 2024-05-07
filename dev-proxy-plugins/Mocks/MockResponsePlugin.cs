@@ -43,7 +43,7 @@ public class MockResponsePlugin : BaseProxyPlugin
     // used in combination with mocks that have an Nth property
     private Dictionary<string, int> _appliedMocks = new();
 
-    public MockResponsePlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public MockResponsePlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 

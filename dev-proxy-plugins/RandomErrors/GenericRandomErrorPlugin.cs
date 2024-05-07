@@ -35,7 +35,7 @@ public class GenericRandomErrorPlugin : BaseProxyPlugin
 
     private readonly Random _random = new();
 
-    public GenericRandomErrorPlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public GenericRandomErrorPlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
         _random = new Random();
     }

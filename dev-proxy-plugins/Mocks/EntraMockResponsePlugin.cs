@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using Microsoft.DevProxy.Abstractions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.DevProxy.Plugins.Mocks;
 
@@ -35,7 +36,7 @@ public class EntraMockResponsePlugin : MockResponsePlugin
 {
     private string? lastNonce;
 
-    public EntraMockResponsePlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public EntraMockResponsePlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 

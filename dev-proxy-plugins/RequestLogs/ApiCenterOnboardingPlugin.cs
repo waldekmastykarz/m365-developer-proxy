@@ -42,7 +42,7 @@ public class ApiCenterOnboardingPlugin : BaseProxyPlugin
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    public ApiCenterOnboardingPlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public ApiCenterOnboardingPlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 

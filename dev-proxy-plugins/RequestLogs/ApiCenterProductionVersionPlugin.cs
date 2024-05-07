@@ -56,7 +56,7 @@ public class ApiCenterProductionVersionPlugin : BaseProxyPlugin
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    public ApiCenterProductionVersionPlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public ApiCenterProductionVersionPlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 

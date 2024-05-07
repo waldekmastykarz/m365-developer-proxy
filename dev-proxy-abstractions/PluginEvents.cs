@@ -5,7 +5,6 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Serialization;
-using Microsoft.Extensions.Logging;
 using Titanium.Web.Proxy.EventArguments;
 using Titanium.Web.Proxy.Http;
 
@@ -14,7 +13,6 @@ namespace Microsoft.DevProxy.Abstractions;
 public interface IProxyContext
 {
     IProxyConfiguration Configuration { get; }
-    ILogger Logger { get; }
     X509Certificate2? Certificate { get; }
 }
 

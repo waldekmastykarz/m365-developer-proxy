@@ -17,7 +17,7 @@ public class RetryAfterPlugin : BaseProxyPlugin
     public override string Name => nameof(RetryAfterPlugin);
     public static readonly string ThrottledRequestsKey = "ThrottledRequests";
 
-    public RetryAfterPlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public RetryAfterPlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 

@@ -50,7 +50,7 @@ public class RateLimitingPlugin : BaseProxyPlugin
     private DateTime _resetTime = DateTime.MinValue;
     private RateLimitingCustomResponseLoader? _loader = null;
 
-    public RateLimitingPlugin(IPluginEvents pluginEvents, IProxyContext context, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, urlsToWatch, configSection)
+    public RateLimitingPlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : base(pluginEvents, context, logger, urlsToWatch, configSection)
     {
     }
 
