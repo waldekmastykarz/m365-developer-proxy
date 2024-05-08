@@ -502,6 +502,8 @@ public class ProxyEngine
                 await e.GetRequestBodyAsString();
             }
 
+            using var scope = _logger.BeginScope(e.HttpClient.Request.Method, e.HttpClient.Request.Url, e.GetHashCode());
+
             e.UserData = e.HttpClient.Request;
             var message = $"{e.HttpClient.Request.Method} {e.HttpClient.Request.Url}";
             _logger.LogRequest([message], MessageType.InterceptedRequest, new LoggingContext(e));
@@ -523,7 +525,7 @@ public class ProxyEngine
         // We only need to set the proxy header if the proxy has not set a response and the request is going to be sent to the target.
         if (!responseState.HasBeenSet)
         {
-            _logger?.LogRequest(new[] { "Passed through" }, MessageType.PassedThrough, new LoggingContext(e));
+            _logger?.LogRequest(["Passed through"], MessageType.PassedThrough, new LoggingContext(e));
             AddProxyHeader(e.HttpClient.Request);
         }
     }
@@ -544,6 +546,8 @@ public class ProxyEngine
                 SessionData = _pluginData[e.GetHashCode()],
                 GlobalData = _globalData
             };
+
+            using var scope = _logger.BeginScope(e.HttpClient.Request.Method, e.HttpClient.Request.Url, e.GetHashCode());
 
             // necessary to make the response body available to plugins
             e.HttpClient.Response.KeepBody = true;
@@ -566,8 +570,12 @@ public class ProxyEngine
                 GlobalData = _globalData
             };
 
-            _logger.LogRequest(new[] { $"{e.HttpClient.Request.Method} {e.HttpClient.Request.Url}" }, MessageType.InterceptedResponse, new LoggingContext(e));
+            using var scope = _logger.BeginScope(e.HttpClient.Request.Method, e.HttpClient.Request.Url, e.GetHashCode());
+
+            var message = $"{e.HttpClient.Request.Method} {e.HttpClient.Request.Url}";
+            _logger.LogRequest([message], MessageType.InterceptedResponse, new LoggingContext(e));
             await _pluginEvents.RaiseProxyAfterResponse(proxyResponseArgs);
+            _logger.LogRequest([message], MessageType.FinishedProcessingRequest, new LoggingContext(e));
             // clean up
             _pluginData.Remove(e.GetHashCode());
         }
@@ -591,9 +599,10 @@ public class ProxyEngine
         // set e.clientCertificate to override
         return Task.CompletedTask;
     }
-    
+
     private void PrintHotkeys()
     {
+        Console.WriteLine("");
         Console.WriteLine("Hotkeys: issue (w)eb request, (r)ecord, (s)top recording, (c)lear screen");
         Console.WriteLine("Press CTRL+C to stop Dev Proxy");
         Console.WriteLine("");
