@@ -47,7 +47,7 @@ internal class ApiCenterOnboardingPluginConfiguration
     public bool CreateApicEntryForNewApis { get; set; } = true;
 }
 
-public class ApiCenterOnboardingPlugin : BaseProxyPlugin
+public class ApiCenterOnboardingPlugin : BaseReportingPlugin
 {
     private ApiCenterOnboardingPluginConfiguration _configuration = new();
     private readonly string[] _scopes = ["https://management.azure.com/.default"];
@@ -220,18 +220,18 @@ public class ApiCenterOnboardingPlugin : BaseProxyPlugin
         if (!newApis.Any())
         {
             _logger?.LogInformation("No new APIs found");
-            ((Dictionary<string, object>)e.GlobalData[ProxyUtils.ReportsKey])[Name] = new ApiCenterOnboardingPluginReport
+            StoreReport(new ApiCenterOnboardingPluginReport
             {
                 ExistingApis = existingApis.ToArray(),
                 NewApis = Array.Empty<ApiCenterOnboardingPluginReportNewApiInfo>()
-            };
+            }, e);
             return;
         }
 
         // dedupe newApis
         newApis = newApis.Distinct().ToList();
 
-        ((Dictionary<string, object>)e.GlobalData[ProxyUtils.ReportsKey])[Name] = new ApiCenterOnboardingPluginReport
+        StoreReport(new ApiCenterOnboardingPluginReport
         {
             ExistingApis = existingApis.ToArray(),
             NewApis = newApis.Select(a => new ApiCenterOnboardingPluginReportNewApiInfo
@@ -239,11 +239,11 @@ public class ApiCenterOnboardingPlugin : BaseProxyPlugin
                 Method = a.method,
                 Url = a.url
             }).ToArray()
-        };
+        }, e);
 
         var apisPerSchemeAndHost = newApis.GroupBy(x =>
         {
-            var u = new Uri(x.Item2);
+            var u = new Uri(x.url);
             return u.GetLeftPart(UriPartial.Authority);
         });
 
@@ -283,7 +283,7 @@ public class ApiCenterOnboardingPlugin : BaseProxyPlugin
 
             Debug.Assert(api.Id is not null);
 
-            if (!generatedOpenApiSpecs.TryGetValue(schemeAndHost, out var openApiSpec))
+            if (!generatedOpenApiSpecs.TryGetValue(schemeAndHost, out var openApiSpecFilePath))
             {
                 _logger?.LogDebug("No OpenAPI spec found for {host}", schemeAndHost);
                 continue;
@@ -305,10 +305,8 @@ public class ApiCenterOnboardingPlugin : BaseProxyPlugin
 
             Debug.Assert(apiDefinition.Id is not null);
 
-            await ImportApiDefinition(apiDefinition.Id, openApiSpec);
+            await ImportApiDefinition(apiDefinition.Id, openApiSpecFilePath);
         }
-
-        _logger?.LogInformation("DONE");
     }
 
     async Task<Api?> CreateApi(string schemeAndHost, IEnumerable<(string method, string url)> apiRequests)
@@ -428,12 +426,13 @@ public class ApiCenterOnboardingPlugin : BaseProxyPlugin
         }
     }
 
-    async Task ImportApiDefinition(string apiDefinitionId, string openApiSpec)
+    async Task ImportApiDefinition(string apiDefinitionId, string openApiSpecFilePath)
     {
         Debug.Assert(_httpClient is not null);
 
         _logger?.LogDebug("  Importing API definition for {api}...", apiDefinitionId);
 
+        var openApiSpec = File.ReadAllText(openApiSpecFilePath);
         var payload = new
         {
             format = "inline",
