@@ -83,4 +83,4 @@ Write-Host "Dev Proxy $version installed!"
 Write-Host
 Write-Host "To get started, run:"
 Write-Host "    . `$PROFILE.CurrentUserAllHosts"
-Write-Host "    devproxy --help"
+Write-Host "    devproxy-beta --help"

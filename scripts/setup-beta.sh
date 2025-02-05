@@ -94,4 +94,4 @@ echo "To get started, run:"
 if [[ "$fileUsed" != "" ]]; then
     echo "    source $fileUsed"
 fi
-echo "    devproxy -h"
+echo "    devproxy-beta -h"
