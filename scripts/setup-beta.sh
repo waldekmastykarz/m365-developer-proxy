@@ -46,7 +46,7 @@ set -e # Terminates program immediately if any command below exits with a non-ze
 if [ $# -eq 0 ]
 then
     echo "Getting latest beta Dev Proxy version..."
-    version=$(curl -s "https://api.github.com/repos/dotnet/dev-proxy/releases?per_page=1" | awk -F: '/"tag_name"/ {print $2}' | sed 's/[", ]//g')
+    version=$(curl -s "https://api.github.com/repos/dotnet/dev-proxy/releases?per_page=2" | awk -F: '/"tag_name"/ {print $2}' | sed 's/[", ]//g' | grep -m 1 -- "-beta")
     echo "Latest beta version is $version"
 else
     version=$1

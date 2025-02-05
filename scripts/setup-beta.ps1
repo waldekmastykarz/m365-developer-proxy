@@ -38,8 +38,8 @@ $full_path = Resolve-Path .
 if (-not $env:DEV_PROXY_VERSION) {
     # Get the latest beta Dev Proxy version
     Write-Host "Getting latest beta Dev Proxy version..."
-    $response = Invoke-RestMethod -Uri "https://api.github.com/repos/dotnet/dev-proxy/releases?per_page=1" -ErrorAction Stop
-    $version = $response[0].tag_name
+    $response = Invoke-RestMethod -Uri "https://api.github.com/repos/dotnet/dev-proxy/releases?per_page=2" -ErrorAction Stop
+    $version = $response | Where-Object { $_.tag_name -like "*-beta*" } | Select-Object -First 1 | Select-Object -ExpandProperty tag_name
     Write-Host "Latest beta version is $version"
 } else {
     $version = $env:DEV_PROXY_VERSION
