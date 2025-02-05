@@ -8,7 +8,7 @@ The Dev Proxy is built with .NET 9 and uses the [Unobtanium Web Proxy](https://g
 
 ## Reporting issues and suggesting new features
 
-Please use [GitHub Issues](https://github.com/microsoft/dev-proxy/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) for bug reports and feature request.
+Please use [GitHub Issues](https://github.com/dotnet/dev-proxy/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) for bug reports and feature request.
 
 We highly recommend you browse existing issues first.
 

@@ -46,7 +46,7 @@ set -e # Terminates program immediately if any command below exits with a non-ze
 if [ $# -eq 0 ]
 then
     echo "Getting latest beta Dev Proxy version..."
-    version=$(curl -s "https://api.github.com/repos/microsoft/dev-proxy/releases?per_page=1" | awk -F: '/"tag_name"/ {print $2}' | sed 's/[", ]//g')
+    version=$(curl -s "https://api.github.com/repos/dotnet/dev-proxy/releases?per_page=1" | awk -F: '/"tag_name"/ {print $2}' | sed 's/[", ]//g')
     echo "Latest beta version is $version"
 else
     version=$1
@@ -54,7 +54,7 @@ fi
 
 echo "Downloading Dev Proxy $version..."
 
-base_url="https://github.com/microsoft/dev-proxy/releases/download/$version/dev-proxy"
+base_url="https://github.com/dotnet/dev-proxy/releases/download/$version/dev-proxy"
 
 ARCH="$(uname -m)"
 if [ "$(expr substr ${ARCH} 1 5)" == "arm64" ] || [ "$(expr substr ${ARCH} 1 7)" == "aarch64" ]; then
