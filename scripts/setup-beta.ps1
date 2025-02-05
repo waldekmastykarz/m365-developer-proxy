@@ -12,12 +12,12 @@ if (-not $IsLinux)
 Write-Host ""
 Write-Host "This script installs Dev Proxy on your machine. It runs the following steps:"
 Write-Host ""
-Write-Host "1. Create the 'devproxy' directory in the current working folder"
+Write-Host "1. Create the 'devproxy-beta' directory in the current working folder"
 Write-Host "2. Download the latest beta Dev Proxy release"
-Write-Host "3. Unzip the release in the devproxy directory"
-Write-Host "4. Configure devproxy and its files as executable (Linux and macOS only)"
+Write-Host "3. Unzip the release in the devproxy-beta directory"
+Write-Host "4. Configure Dev Proxy and its files as executable (Linux and macOS only)"
 Write-Host "5. Configure new version notifications for the beta channel"
-Write-Host "6. Add the devproxy directory to your PATH environment variable in `$PROFILE.CurrentUserAllHosts"
+Write-Host "6. Add the devproxy-beta directory to your PATH environment variable in `$PROFILE.CurrentUserAllHosts"
 Write-Host ""
 Write-Host "Continue (y/n)? " -NoNewline
 $response = [System.Console]::ReadKey().KeyChar
@@ -29,8 +29,8 @@ if ($response -notin @('y', 'Y')) {
 
 Write-Host "`n"
 
-New-Item -ItemType Directory -Force -Path .\devproxy -ErrorAction Stop | Out-Null
-Set-Location .\devproxy | Out-Null
+New-Item -ItemType Directory -Force -Path .\devproxy-beta -ErrorAction Stop | Out-Null
+Set-Location .\devproxy-beta | Out-Null
 
 # Get the full path of the current directory
 $full_path = Resolve-Path .
@@ -75,7 +75,7 @@ if (!(Test-Path $PROFILE.CurrentUserAllHosts)) {
 }
 
 if (!(Select-String -Path $PROFILE.CurrentUserAllHosts -Pattern "devproxy")) {
-    Write-Host "Adding devproxy to `$PROFILE.CurrentUserAllHosts..."
+    Write-Host "Adding Dev Proxy to `$PROFILE.CurrentUserAllHosts..."
     Add-Content -Path $PROFILE.CurrentUserAllHosts -Value "$([Environment]::NewLine)`$env:PATH += `"$([IO.Path]::PathSeparator)$full_path`""
 }
 

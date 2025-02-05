@@ -12,12 +12,12 @@ fi
 echo ""
 echo "This script installs Dev Proxy on your machine. It runs the following steps:"
 echo ""
-echo "1. Create the 'devproxy' directory in the current working folder"
+echo "1. Create the 'devproxy-beta' directory in the current working folder"
 echo "2. Download the latest beta Dev Proxy release"
-echo "3. Unzip the release in the devproxy directory"
-echo "4. Configure devproxy and its files as executable"
+echo "3. Unzip the release in the devproxy-beta directory"
+echo "4. Configure Dev Proxy and its files as executable"
 echo "5. Configure new version notifications for the beta channel"
-echo "6. Add the devproxy directory to your PATH environment variable in your shell profile"
+echo "6. Add the devproxy-beta directory to your PATH environment variable in your shell profile"
 echo ""
 
 if [ -t 0 ]; then
@@ -37,8 +37,8 @@ if [ -t 0 ]; then
     echo -e "\n"
 fi
 
-mkdir devproxy
-cd devproxy
+mkdir devproxy-beta
+cd devproxy-beta
 full_path=$(pwd)
 
 set -e # Terminates program immediately if any command below exits with a non-zero exit status
@@ -68,7 +68,7 @@ fi
 
 unzip -o ./devproxy.zip -d ./
 rm ./devproxy.zip
-echo "Configuring devproxy and its files as executable..."
+echo "Configuring Dev Proxy and its files as executable..."
 chmod +x ./devproxy-beta ./libe_sqlite3.so
 echo "Configuring new version notifications for the beta channel..."
 sed -i 's/"newVersionNotification": "stable"/"newVersionNotification": "beta"/g' ./devproxyrc.json
