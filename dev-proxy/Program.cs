@@ -61,6 +61,8 @@ if (hasGlobalOption || hasSubCommand)
 {
     // we don't need to load plugins if the user is using a global option or using a subcommand, so we can exit early
     await rootCommand.InvokeAsync(args);
+    // required to output all messages before closing the program
+    loggerFactory.Dispose();
     return;
 }
 

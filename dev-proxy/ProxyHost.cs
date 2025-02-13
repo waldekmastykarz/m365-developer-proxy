@@ -331,6 +331,16 @@ internal class ProxyHost
         configGetCommand.SetHandler(async configId => await ConfigGetCommandHandler.DownloadConfigAsync(configId, logger), configIdArgument);
         configCommand.Add(configGetCommand);
 
+        var configNewCommand = new Command("new", "Create new Dev Proxy configuration file");
+        var nameArgument = new Argument<string>("name", "Name of the configuration file")
+        {
+            Arity = ArgumentArity.ZeroOrOne
+        };
+        nameArgument.SetDefaultValue("devproxyrc.json");
+        configNewCommand.AddArgument(nameArgument);
+        configNewCommand.SetHandler(async name => await ConfigNewCommandHandler.CreateConfigFileAsync(name, logger), nameArgument);
+        configCommand.Add(configNewCommand);
+
         var configOpenCommand = new Command("open", "Open devproxyrc.json");
         configOpenCommand.SetHandler(() =>
         {
