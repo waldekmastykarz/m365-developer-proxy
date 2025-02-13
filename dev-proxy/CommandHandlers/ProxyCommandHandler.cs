@@ -120,11 +120,6 @@ public class ProxyCommandHandler(IPluginEvents pluginEvents,
         {
             Configuration.WatchProcessNames = watchProcessNames;
         }
-        var rate = context.ParseResult.GetValueForOption<int?>(ProxyHost.RateOptionName, _options);
-        if (rate is not null)
-        {
-            Configuration.Rate = rate.Value;
-        }
         var noFirstRun = context.ParseResult.GetValueForOption<bool?>(ProxyHost.NoFirstRunOptionName, _options);
         if (noFirstRun is not null)
         {

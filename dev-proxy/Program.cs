@@ -46,31 +46,16 @@ RootCommand rootCommand = proxyHost.GetRootCommand(logger);
 
 // store the global options that are created automatically for us
 // rootCommand doesn't return the global options, so we have to store them manually
-string[] globalOptions = ["--version", "--help", "-h", "/h", "-?", "/?"];
+string[] globalOptions = ["--version"];
+string[] helpOptions = ["--help", "-h", "/h", "-?", "/?"];
 
-// check if any of the global options are present
+// check if any of the global- or help options are present
 var hasGlobalOption = args.Any(arg => globalOptions.Contains(arg));
+var hasHelpOption = args.Any(arg => helpOptions.Contains(arg));
 
-// get the list of available subcommands
-var subCommands = rootCommand.Children.OfType<Command>().Select(c => c.Name).ToArray();
-
-// check if any of the subcommands are present
-var hasSubCommand = args.Any(arg => subCommands.Contains(arg));
-
-if (hasGlobalOption || hasSubCommand)
-{
-    // we don't need to load plugins if the user is using a global option or using a subcommand, so we can exit early
-    await rootCommand.InvokeAsync(args);
-    // required to output all messages before closing the program
-    loggerFactory.Dispose();
-    return;
-}
-
+// load plugins to get their options and commands
 var pluginLoader = new PluginLoader(logger, loggerFactory);
 PluginLoaderResult loaderResults = await pluginLoader.LoadPluginsAsync(pluginEvents, context);
-// have all the plugins init
-pluginEvents.RaiseInit(new InitArgs());
-
 var options = loaderResults.ProxyPlugins
     .SelectMany(p => p.GetOptions())
     // remove duplicates by comparing the option names
@@ -84,13 +69,27 @@ loaderResults.ProxyPlugins
     .ToList()
     .ForEach(rootCommand.AddCommand);
 
-rootCommand.Handler = proxyHost.GetCommandHandler(pluginEvents, [.. options], loaderResults.UrlsToWatch, logger);
+// get the list of available subcommands
+var subCommands = rootCommand.Children.OfType<Command>().Select(c => c.Name).ToArray();
+
+// check if any of the subcommands are present
+var hasSubCommand = args.Any(arg => subCommands.Contains(arg));
+
+if (hasGlobalOption || hasSubCommand)
+{
+    // we don't need to init plugins if the user is using a global option or
+    // using a subcommand, so we can exit early
+    await rootCommand.InvokeAsync(args);
+    // required to output all messages before closing the program
+    loggerFactory.Dispose();
+    return;
+}
 
 // filter args to retrieve options
 var incomingOptions = args.Where(arg => arg.StartsWith('-')).ToArray();
 
-// remove the global options from the incoming options
-incomingOptions = incomingOptions.Except(globalOptions).ToArray();
+// remove the global- and help options from the incoming options
+incomingOptions = [.. incomingOptions.Except([.. globalOptions, .. helpOptions])];
 
 // compare the incoming options against the root command options
 foreach (var option in rootCommand.Options)
@@ -113,11 +112,18 @@ foreach (var option in rootCommand.Options)
 // list the remaining incoming options as unknown in the output
 if (incomingOptions.Length > 0)
 {
-    logger.LogError("Unknown option(s): {unknownOptions}", string.Join(" ", incomingOptions));
-    logger.LogInformation("TIP: Use --help view available options");
-    logger.LogInformation("TIP: Are you missing a plugin? See: https://aka.ms/devproxy/plugins");
+    Console.Error.WriteLine("Unknown option(s): {0}", string.Join(" ", incomingOptions));
+    Console.Error.WriteLine("TIP: Use --help view available options");
+    Console.Error.WriteLine("TIP: Are you missing a plugin? See: https://aka.ms/devproxy/plugins");
 }
 else
 {
+    if (!hasHelpOption)
+    {
+        // have all the plugins init
+        pluginEvents.RaiseInit(new InitArgs());
+    }
+
+    rootCommand.Handler = proxyHost.GetCommandHandler(pluginEvents, [.. options], loaderResults.UrlsToWatch, logger);
     await rootCommand.InvokeAsync(args);
 }
