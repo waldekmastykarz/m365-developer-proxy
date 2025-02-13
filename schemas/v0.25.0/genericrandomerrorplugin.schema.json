@@ -9,6 +9,11 @@
     "errorsFile": {
       "type": "string"
     },
+    "rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
     "retryAfterInSeconds": {
       "type": "integer",
       "minimum": 1

@@ -17,9 +17,9 @@
     "https://jsonplaceholder.typicode.com/*"
   ],
   "genericRandomErrorPlugin": {
-    "errorsFile": "devproxy-errors.json"
+    "errorsFile": "devproxy-errors.json",
+    "rate": 50
   },
-  "rate": 50,
   "logLevel": "information",
   "newVersionNotification": "stable",
   "showSkipMessages": true,

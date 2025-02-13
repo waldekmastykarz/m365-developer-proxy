@@ -176,7 +176,8 @@
       "mocksFile": "m365-mocks.json"
     },
     "graphRandomErrorsPlugin": {
-      "allowedErrors": [ 429, 500, 502, 503, 504, 507 ]
+      "allowedErrors": [ 429, 500, 502, 503, 504, 507 ],
+      "rate": 50
     },
     "executionSummaryPlugin": {
       "groupBy": "url"
@@ -199,7 +200,6 @@
       "rateLimit": 120,
       "retryAfterSeconds": 5
     },
-    "rate": 50,
     "labelMode": "text",
     "logLevel": "information"
   }

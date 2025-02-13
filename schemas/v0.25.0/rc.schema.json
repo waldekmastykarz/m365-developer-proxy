@@ -108,11 +108,6 @@
       "minimum": 0,
       "maximum": 65535
     },
-    "rate": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 100
-    },
     "record": {
       "type": "boolean"
     },

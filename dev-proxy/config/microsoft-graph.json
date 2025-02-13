@@ -67,12 +67,12 @@
     "https://microsoftgraph.chinacloudapi.cn/beta/*"
   ],
   "graphRandomErrorsPlugin": {
-    "allowedErrors": [ 429, 500, 502, 503, 504, 507 ]
+    "allowedErrors": [ 429, 500, 502, 503, 504, 507 ],
+    "rate": 50
   },
   "executionSummaryPlugin": {
     "groupBy": "url"
   },
-  "rate": 50,
   "labelMode": "text",
   "logLevel": "information"
 }
