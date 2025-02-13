@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/dotnet/dev-proxy/main/schemas/v0.24.0/rc.schema.json",
+  "$schema": "https://raw.githubusercontent.com/dotnet/dev-proxy/main/schemas/v0.25.0/rc.schema.json",
   "plugins": [
     {
       "name": "RetryAfterPlugin",
@@ -17,9 +17,10 @@
     "https://jsonplaceholder.typicode.com/*"
   ],
   "genericRandomErrorPlugin": {
-    "errorsFile": "devproxy-errors.json"
+    "$schema": "https://raw.githubusercontent.com/dotnet/dev-proxy/main/schemas/v0.25.0/genericrandomerrorplugin.schema.json",
+    "errorsFile": "devproxy-errors.json",
+    "rate": 50
   },
-  "rate": 50,
   "logLevel": "information",
   "newVersionNotification": "stable",
   "showSkipMessages": true,

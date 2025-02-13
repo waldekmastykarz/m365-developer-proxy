@@ -17,7 +17,6 @@ public interface IProxyConfiguration
     LogLevel LogLevel { get; }
     bool NoFirstRun { get; }
     int Port { get; }
-    int Rate { get; }
     bool Record { get; }
     IEnumerable<int> WatchPids { get; }
     IEnumerable<string> WatchProcessNames { get; }

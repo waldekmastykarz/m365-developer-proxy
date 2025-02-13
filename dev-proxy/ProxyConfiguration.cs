@@ -28,7 +28,6 @@ public class ProxyConfiguration : IProxyConfiguration
     public LogLevel LogLevel { get; set; } = LogLevel.Information;
     public IEnumerable<int> WatchPids { get; set; } = new List<int>();
     public IEnumerable<string> WatchProcessNames { get; set; } = [];
-    public int Rate { get; set; } = 50;
     public bool NoFirstRun { get; set; } = false;
     public bool AsSystemProxy { get; set; } = true;
     public bool InstallCert { get; set; } = true;
