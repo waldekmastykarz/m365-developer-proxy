@@ -12,6 +12,8 @@ using Titanium.Web.Proxy.Models;
 using DevProxy.Plugins.Behavior;
 using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
+using System.CommandLine.Invocation;
+using System.CommandLine;
 
 namespace DevProxy.Plugins.RandomErrors;
 internal enum GenericRandomErrorFailMode
@@ -24,12 +26,15 @@ internal enum GenericRandomErrorFailMode
 public class GenericRandomErrorConfiguration
 {
     public string? ErrorsFile { get; set; }
+    public int Rate { get; set; } = 50;
     public int RetryAfterInSeconds { get; set; } = 5;
     public IEnumerable<GenericErrorResponse> Errors { get; set; } = [];
 }
 
 public class GenericRandomErrorPlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : BaseProxyPlugin(pluginEvents, context, logger, urlsToWatch, configSection)
 {
+    private static readonly string _rateOptionName = "--failure-rate";
+
     private readonly GenericRandomErrorConfiguration _configuration = new();
     private GenericErrorResponsesLoader? _loader = null;
 
@@ -38,7 +43,7 @@ public class GenericRandomErrorPlugin(IPluginEvents pluginEvents, IProxyContext 
     private readonly Random _random = new();
 
     // uses config to determine if a request should be failed
-    private GenericRandomErrorFailMode ShouldFail() => _random.Next(1, 100) <= Context.Configuration.Rate ? GenericRandomErrorFailMode.Random : GenericRandomErrorFailMode.PassThru;
+    private GenericRandomErrorFailMode ShouldFail() => _random.Next(1, 100) <= _configuration.Rate ? GenericRandomErrorFailMode.Random : GenericRandomErrorFailMode.PassThru;
 
     private void FailResponse(ProxyRequestArgs e)
     {
@@ -192,7 +197,41 @@ public class GenericRandomErrorPlugin(IPluginEvents pluginEvents, IProxyContext 
         _loader = new GenericErrorResponsesLoader(Logger, _configuration);
 
         PluginEvents.Init += OnInit;
+        PluginEvents.OptionsLoaded += OnOptionsLoaded;
         PluginEvents.BeforeRequest += OnRequestAsync;
+    }
+
+    public override Option[] GetOptions()
+    {
+        var _rateOption = new Option<int?>(_rateOptionName, "The percentage of chance that a request will fail");
+        _rateOption.AddAlias("-f");
+        _rateOption.ArgumentHelpName = "failure rate";
+        _rateOption.AddValidator((input) =>
+        {
+            try
+            {
+                int? value = input.GetValueForOption(_rateOption);
+                if (value.HasValue && (value < 0 || value > 100))
+                {
+                    input.ErrorMessage = $"{value} is not a valid failure rate. Specify a number between 0 and 100";
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                input.ErrorMessage = ex.Message;
+            }
+        });
+
+        return [_rateOption];
+    }
+
+    private void OnOptionsLoaded(object? sender, OptionsLoadedArgs e)
+    {
+        InvocationContext context = e.Context;
+
+        var rate = context.ParseResult.GetValueForOption<int?>(_rateOptionName, e.Options);
+        if (rate is not null)
+            _configuration.Rate = rate.Value;
     }
 
     private void OnInit(object? sender, InitArgs e)
@@ -216,7 +255,7 @@ public class GenericRandomErrorPlugin(IPluginEvents pluginEvents, IProxyContext 
 
         var failMode = ShouldFail();
 
-        if (failMode == GenericRandomErrorFailMode.PassThru && Context.Configuration?.Rate != 100)
+        if (failMode == GenericRandomErrorFailMode.PassThru && _configuration.Rate != 100)
         {
             Logger.LogRequest("Pass through", MessageType.Skipped, new LoggingContext(e.Session));
             return Task.CompletedTask;

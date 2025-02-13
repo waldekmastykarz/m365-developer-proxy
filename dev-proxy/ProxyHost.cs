@@ -27,8 +27,6 @@ internal class ProxyHost
     private readonly Option<IEnumerable<string>?> _watchProcessNamesOption;
     internal static readonly string ConfigFileOptionName = "--config-file";
     private static Option<string?>? _configFileOption;
-    internal static readonly string RateOptionName = "--failure-rate";
-    private readonly Option<int?> _rateOption;
     internal static readonly string NoFirstRunOptionName = "--no-first-run";
     private readonly Option<bool?> _noFirstRunOption;
     internal static readonly string AsSystemProxyOptionName = "--as-system-proxy";
@@ -230,25 +228,6 @@ internal class ProxyHost
             AllowMultipleArgumentsPerToken = true
         };
 
-        _rateOption = new Option<int?>(RateOptionName, "The percentage of chance that a request will fail");
-        _rateOption.AddAlias("-f");
-        _rateOption.ArgumentHelpName = "failure rate";
-        _rateOption.AddValidator((input) =>
-        {
-            try
-            {
-                int? value = input.GetValueForOption(_rateOption);
-                if (value.HasValue && (value < 0 || value > 100))
-                {
-                    input.ErrorMessage = $"{value} is not a valid failure rate. Specify a number between 0 and 100";
-                }
-            }
-            catch (InvalidOperationException ex)
-            {
-                input.ErrorMessage = ex.Message;
-            }
-        });
-
         _noFirstRunOption = new Option<bool?>(NoFirstRunOptionName, "Skip the first run experience");
 
         _asSystemProxyOption = new Option<bool?>(AsSystemProxyOptionName, "Set Dev Proxy as the system proxy");
@@ -304,7 +283,6 @@ internal class ProxyHost
             _recordOption,
             _watchPidsOption,
             _watchProcessNamesOption,
-            _rateOption,
             // _configFileOption is set during the call to load
             // `ProxyCommandHandler.Configuration`. As such, it's always set here
             _configFileOption!,
@@ -466,7 +444,6 @@ internal class ProxyHost
             _recordOption,
             _watchPidsOption,
             _watchProcessNamesOption,
-            _rateOption,
             _noFirstRunOption,
             _asSystemProxyOption,
             _installCertOption,

@@ -25,12 +25,15 @@ internal enum GraphRandomErrorFailMode
 public class GraphRandomErrorConfiguration
 {
     public List<int> AllowedErrors { get; set; } = [];
+    public int Rate { get; set; } = 50;
     public int RetryAfterInSeconds { get; set; } = 5;
 }
 
 public class GraphRandomErrorPlugin(IPluginEvents pluginEvents, IProxyContext context, ILogger logger, ISet<UrlToWatch> urlsToWatch, IConfigurationSection? configSection = null) : BaseProxyPlugin(pluginEvents, context, logger, urlsToWatch, configSection)
 {
     private static readonly string _allowedErrorsOptionName = "--allowed-errors";
+    private static readonly string _rateOptionName = "--failure-rate";
+
     private readonly GraphRandomErrorConfiguration _configuration = new();
 
     public override string Name => nameof(GraphRandomErrorPlugin);
@@ -89,7 +92,7 @@ public class GraphRandomErrorPlugin(IPluginEvents pluginEvents, IProxyContext co
     private readonly Random _random = new();
 
     // uses config to determine if a request should be failed
-    private GraphRandomErrorFailMode ShouldFail(ProxyRequestArgs e) => _random.Next(1, 100) <= Context.Configuration.Rate ? GraphRandomErrorFailMode.Random : GraphRandomErrorFailMode.PassThru;
+    private GraphRandomErrorFailMode ShouldFail(ProxyRequestArgs e) => _random.Next(1, 100) <= _configuration.Rate ? GraphRandomErrorFailMode.Random : GraphRandomErrorFailMode.PassThru;
 
     private void FailResponse(ProxyRequestArgs e)
     {
@@ -222,7 +225,26 @@ public class GraphRandomErrorPlugin(IPluginEvents pluginEvents, IProxyContext co
         };
         _allowedErrors.AddAlias("-a");
 
-        return [_allowedErrors];
+        var _rateOption = new Option<int?>(_rateOptionName, "The percentage of chance that a request will fail");
+        _rateOption.AddAlias("-f");
+        _rateOption.ArgumentHelpName = "failure rate";
+        _rateOption.AddValidator((input) =>
+        {
+            try
+            {
+                int? value = input.GetValueForOption(_rateOption);
+                if (value.HasValue && (value < 0 || value > 100))
+                {
+                    input.ErrorMessage = $"{value} is not a valid failure rate. Specify a number between 0 and 100";
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                input.ErrorMessage = ex.Message;
+            }
+        });
+
+        return [_allowedErrors, _rateOption];
     }
 
     public override async Task RegisterAsync()
@@ -250,6 +272,10 @@ public class GraphRandomErrorPlugin(IPluginEvents pluginEvents, IProxyContext co
                 _methodStatusCode[k] = _methodStatusCode[k].Where(e => _configuration.AllowedErrors.Any(a => (int)e == a)).ToArray();
             }
         }
+
+        var rate = context.ParseResult.GetValueForOption<int?>(_rateOptionName, e.Options);
+        if (rate is not null)
+            _configuration.Rate = rate.Value;
     }
 
     private Task OnRequestAsync(object? sender, ProxyRequestArgs e)
@@ -267,9 +293,8 @@ public class GraphRandomErrorPlugin(IPluginEvents pluginEvents, IProxyContext co
             return Task.CompletedTask;
         }
 
-
         var failMode = ShouldFail(e);
-        if (failMode == GraphRandomErrorFailMode.PassThru && Context.Configuration.Rate != 100)
+        if (failMode == GraphRandomErrorFailMode.PassThru && _configuration.Rate != 100)
         {
             Logger.LogRequest("Pass through", MessageType.Skipped, new LoggingContext(e.Session));
             return Task.CompletedTask;

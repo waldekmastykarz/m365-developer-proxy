@@ -185,7 +185,8 @@
       503,
       504,
       507
-    ]
+    ],
+    "rate": 50
   },
   "executionSummaryPlugin": {
     "$schema": "https://raw.githubusercontent.com/dotnet/dev-proxy/main/schemas/v0.25.0/executionsummaryplugin.schema.json",
@@ -214,7 +215,6 @@
     "rateLimit": 120,
     "retryAfterSeconds": 5
   },
-  "rate": 50,
   "labelMode": "text",
   "logLevel": "information"
 }

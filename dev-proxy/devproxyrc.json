@@ -18,9 +18,9 @@
   ],
   "genericRandomErrorPlugin": {
     "$schema": "https://raw.githubusercontent.com/dotnet/dev-proxy/main/schemas/v0.25.0/genericrandomerrorplugin.schema.json",
-    "errorsFile": "devproxy-errors.json"
+    "errorsFile": "devproxy-errors.json",
+    "rate": 50
   },
-  "rate": 50,
   "logLevel": "information",
   "newVersionNotification": "stable",
   "showSkipMessages": true,
